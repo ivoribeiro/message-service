@@ -9,7 +9,6 @@ module.exports = [{
   inputs: {
     from: {
       required: true,
-      validator: 'filled|max:20'
     },
     to: {
       required: true,
@@ -24,7 +23,7 @@ module.exports = [{
       default: 'Default value'
     },
     text: {
-      required: true,
+      required: false,
       default: 'Default value'
     }
   },
@@ -32,17 +31,8 @@ module.exports = [{
   async run(api, action) {
     // put the input parameters on the response object
     const { from, to, subject, html, text } = action.params
-    const smtpConfig = {
-      host: "smtp.mailtrap.io",
-      port: "2525",
-      secure: false, // upgrade later with STARTTLS
-      auth: {
-        user: "d55b7fdb18c00d",
-        pass: "83170d319d9ca2",
-      }
-    }
 
-    const transporter = await nodemailer.createTransport(smtpConfig)
+    const transporter = await nodemailer.createTransport(api.config.smtpConfig)
     const email = await transporter.sendMail({ from, to, subject, html, text })
     action.response.email = email
   }
